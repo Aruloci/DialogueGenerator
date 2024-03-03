@@ -39,7 +39,8 @@ conversation = client.chat.completions.create(
         },
         {
             "role": "user",
-            "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
+            # "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
+            "content": "Generate a dialog between a boss and his employee about his bad performance at work. The worker should be scared and the boss should be angry.",
         },
     ],
 )

@@ -37,9 +37,9 @@ def generate_conversation(conversation):
     result = json.loads(conversation.choices[0].message.content)
     save_conversation(conversation)
 
-    # Loop through the conversation object and retrieve each text
+    # Loop through the conversation object and generate audio files
     for index, dialogue in enumerate(result["conversation"]):
-        generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"])
+        generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"])
 
     # Merge the audio files
     input_files = [os.path.join(os.getcwd(), f"{output_dir}output{i}.mp3") for i in range(len(result["conversation"]))]

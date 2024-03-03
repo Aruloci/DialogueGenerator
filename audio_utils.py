@@ -9,7 +9,7 @@ output_dir = 'output/' # Where the output files will be saved
 ############################################
 # Text to speech using the Eleven Labs API
 ############################################
-def generate_elevenlabs_audio(text_id: int, text: str, speaker: str):
+def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int = 0, emotion: str = "neutral"):
     CHUNK_SIZE = 1024
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{speaker}"
     headers = {
@@ -18,13 +18,14 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str):
         "xi-api-key": os.environ.get("ELEVENLABS_API_KEY")
     }
     data = {
-        "text": text,
+        "text": f'{text}<break time="2.0s" />he said {emotion}ly.',
         "model_id": "eleven_monolingual_v1",
         "voice_settings": {
             "stability": 0.5,
             "similarity_boost": 0.5
         }
     }
+    print(data)
     response = requests.post(url, json=data, headers=headers)
     with open(f"{output_dir}output{text_id}.mp3", 'wb') as f:
         for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
