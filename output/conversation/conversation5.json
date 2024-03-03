@@ -1,0 +1,39 @@
+{
+    "conversation": [
+        {
+            "Name": "Alice",
+            "Text": "Excuse me, sir, could you please tell us what's causing the delay of the train?",
+            "Emotion": "polite",
+            "Timing": 0,
+            "Voice": "Mr0lS24b2pkDEz6noGEd"
+        },
+        {
+            "Name": "Emma",
+            "Text": "We've been waiting for quite a while now.",
+            "Emotion": "impatient",
+            "Timing": 2,
+            "Voice": "otVgZoZFXk2SZDc0eBdZ"
+        },
+        {
+            "Name": "Conductor",
+            "Text": "I'm truly sorry for the inconvenience. There seems to be a signal failure up ahead.",
+            "Emotion": "apologetic",
+            "Timing": 2,
+            "Voice": "H1oKRJV3pAGTo5Un0uwG"
+        },
+        {
+            "Name": "Alice",
+            "Text": "Oh no, that's frustrating! Is there an estimate for when the issue will be resolved?",
+            "Emotion": "concerned",
+            "Timing": 1,
+            "Voice": "Mr0lS24b2pkDEz6noGEd"
+        },
+        {
+            "Name": "Emma",
+            "Text": "We can't afford to be late for our appointment.",
+            "Emotion": "worried",
+            "Timing": 4,
+            "Voice": "otVgZoZFXk2SZDc0eBdZ"
+        }
+    ]
+}

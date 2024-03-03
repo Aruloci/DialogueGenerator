@@ -1,6 +1,9 @@
 from pydub import AudioSegment
 import os
 
+############################################
+# Merge multiple audio files into one
+############################################
 def merge_audio_files(input_files, output_file):
     # Initialize an empty audio segment
     merged_audio = AudioSegment.empty()
