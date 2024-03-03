@@ -1,5 +1,5 @@
 from pydub import AudioSegment
-import os
+
 
 ############################################
 # Merge multiple audio files into one

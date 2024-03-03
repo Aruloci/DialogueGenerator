@@ -1,9 +1,10 @@
-from openai import OpenAI
-import os
 import json
-import requests
 import logging
+import os
+import requests
+
 from audio_utils import merge_audio_files
+
 
 output_dir = 'output/' # Where the output files will be saved
 

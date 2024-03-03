@@ -1,8 +1,10 @@
-from dotenv import load_dotenv
-import os
-from openai import OpenAI
 import logging
+import os
+
+from dotenv import load_dotenv
+from openai import OpenAI
 from conversation_utils import generate_conversation
+
 
 # Load environment variables
 load_dotenv()
