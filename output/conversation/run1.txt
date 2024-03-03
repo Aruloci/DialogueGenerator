@@ -1,8 +1,0 @@
-Name: Sam,Text: Hey guys, have you heard about the train delay at the station today?,Emotion: Curious,Timing: 0
-Name: Alex,Text: Oh yeah, I just got the alert on my phone. It says the train is delayed by an hour.,Emotion: Surprised,Timing: 2
-Name: Sarah,Text: Ugh, this is so frustrating. I was really counting on making it to the meeting on time.,Emotion: Irritated,Timing: 1
-Name: Sam,Text: Yeah, I know what you mean. It's always a hassle when the trains are delayed.,Emotion: Sympathetic,Timing: 3
-Name: Alex,Text: Do you think we should look for an alternative transportation or just wait it out?,Emotion: Concerned,Timing: 2
-Name: Sarah,Text: I think we should explore other options. I can't afford to be late for this meeting.,Emotion: Anxious,Timing: 0
-Name: Sam,Text: How about taking a cab? It might be a bit pricey but at least we'll be on time.,Emotion: Suggestive,Timing: 1
-Name: Alex,Text: Good idea. Let's grab a cab together and split the fare.,Emotion: Agreed,Timing: 2
