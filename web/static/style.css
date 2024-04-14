@@ -9,7 +9,7 @@
     --button-bg-color-light: #0057b8;
     --button-text-color-light: #ffffff;
     --button-border-color-light: #0056b3;
-    --button-hover-bg-color-light: #004494 --button-hover-border-color-light: #004494;
+    --button-hover-bg-color-light: #004494;
     --link-color-light: #0056b3;
     --link-hover-color-light: #003c82;
 
@@ -19,7 +19,6 @@
     --input-bg-color-light: #ffffff;
     --input-text-color-light: #495057;
     --input-border-color-light: #ced4da;
-    --close-btn-color-light: #000000;
 
     --bg-color-dark: #282c34;
     --text-color-dark: #ffffff;
@@ -39,7 +38,6 @@
     --input-bg-color-dark: #333333;
     --input-text-color-dark: #e2e2e2;
     --input-border-color-dark: #444444;
-    --close-btn-color-dark: #f40b0b;
 }
 
 body {
@@ -83,6 +81,47 @@ a:hover {
 
 .dark-theme a:hover {
     color: var(--link-hover-color-dark);
+}
+
+.table,
+.table th,
+.table td {
+    background-color: var(--bg-color-light);
+    color: var(--text-color-light);
+    border-color: var(--modal-border-color-light);
+}
+
+.table {
+    background-color: var(--bg-color-light);
+}
+
+.dark-theme .table,
+.dark-theme .table th,
+.dark-theme .table td {
+    background-color: var(--modal-bg-color-dark); 
+    color: var(--text-color-dark);
+    border-color: var(--modal-border-color-dark);
+}
+
+.dark-theme .table {
+    background-color: var(--modal-bg-color-dark); 
+}
+
+.table input {
+    background-color: var(--bg-color-light);
+    color: var(--input-text-color-light);
+    border: 1px solid var(--input-border-color-light);
+}
+
+.dark-theme .table input {
+    background-color: var(--input-bg-color-dark);
+    color: var(--input-text-color-dark);
+    border: 1px solid var(--input-border-color-dark);
+}
+
+.dark-theme .table tbody td {
+    background-color: var(--bg-color-dark);
+    color: var(--text-color-dark);
 }
 
 li {
@@ -141,10 +180,6 @@ body {
     background-color: var(--input-bg-color-light);
     color: var(--input-text-color-light);
     border: 1px solid var(--input-border-color-light);
-}
-
-.modal-content .btn-close {
-    color: var(--close-btn-color-light);
 }
 
 .dark-theme .modal-content {
@@ -247,7 +282,6 @@ a.sidebar-link:hover {
 .sidebar-item {
     display: flex;
     align-items: center;
-    /* Vertically center the content within each item */
     justify-content: flex-start;
 }
 
