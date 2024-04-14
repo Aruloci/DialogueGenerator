@@ -1,0 +1,79 @@
+{% extends 'components/_base.html' %}
+{% block title %}Keys{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h1>API Keys</h1>
+    <p>Manage your API keys here.</p>
+
+    {% if current_user.is_authenticated %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>API Key</th>
+                <th>Last Updated</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set services = {'OpenAI': openai_key, 'ElevenLabs': elevenlabs_key} %}
+            {% for service, key in services.items() %}
+            <tr>
+                <td>{{ service }}</td>
+                <td>
+                    <input type="text" class="form-control api-key-input"
+                        value="{{ key.api_key[:3] ~ '*' * (key.api_key|length - 3) if key else '' }}"
+                        data-full-key="{{ key.api_key if key else '' }}"
+                        data-key-length="{{ key.api_key|length if key else 0 }}"
+                        onfocus="if (this.getAttribute('data-full-key')) this.value = this.getAttribute('data-full-key');"
+                        onblur="updateAPIKey(this, '{{ service }}');">
+                </td>
+                <td>{{ key.last_updated.strftime('%Y-%m-%d') if key else 'Never' }}</td>
+                <td><i class="bi bi-save" style="visibility: hidden;"></i></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Please log in to manage API keys.</p>
+    {% endif %}
+</div>
+
+<script>
+    function updateAPIKey(input, service) {
+        const saveIcon = input.parentNode.nextElementSibling.nextElementSibling.children[0];
+        saveIcon.classList.add('visible'); // Make the icon visible and opaque
+        const fullValue = input.value;
+        const keyLength = input.getAttribute('data-key-length');
+
+        fetch('/update-api-key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ service: service, apiKey: fullValue })
+        })
+            .then(response => response.json())
+            .then(data => {
+                saveIcon.className = data.status === 'success' ? 'bi bi-check-circle save-icon visible' : 'bi bi-x-circle save-icon visible';
+                revertKeyDisplay(input, fullValue, keyLength); 
+                setTimeout(() => {
+                    saveIcon.classList.remove('visible'); 
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error updating API key:', error);
+                saveIcon.className = 'bi bi-x-circle save-icon visible';
+                setTimeout(() => {
+                    saveIcon.classList.remove('visible');
+                }, 3000);
+            });
+    }
+
+    function revertKeyDisplay(input, fullValue, keyLength) {
+        const visibleChars = 3;
+        const maskedPart = '*'.repeat(keyLength - visibleChars);
+        input.value = fullValue.substring(0, visibleChars) + maskedPart;
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'components/_base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h1>Home</h1>
+    <p>Welcome to the home page.</p>
+
+    {% if current_user.is_authenticated %}
+    <h2>You are logged in</h2>
+    {% else %}
+    <h2>You are not logged in</h2>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -26,7 +26,7 @@ conversation = client.chat.completions.create(
             based on the scenario set by the user. To make a conversation feel more natural you should annotate every sentence with fitting emotions. Speakers
             should also be able to interrupt or talk over each other. To generate the conversation stick to the following format: 
                 - Name: Name of the speaker. If no names are given generate names.
-                - Text: The generated sentence for the speaker.
+                - Text: The generated sentence for the speaker. Use ... and - to indicate a pause or stutter. Use comic speech like "Uhm", "Hmph", "Argh" to create a more natural conversation.
                 - Emotion: The corresponding emotion of the speakers sentence.
                 - Timing: The time in seconds between the current and previous sentence. Use 0 if the sentence starts immediately after the last one. Use any positive
                 number to create a small waiting window. A negative number indicates that the sentences overlap each other.
@@ -34,9 +34,9 @@ conversation = client.chat.completions.create(
                 multiple female speakers choose one voice for each of them. The voice should be the same for the same speaker throughout the conversation. Make sure that no voice is used for multiple speakers.
 
             To make the generated conversation easier to parse create a JSON formatted output. The root of the JSON object is called "conversation". Make sure the keys are named "Name", "Text", "Emotion", "Timing" and "Voice".
-            One conversation should contain at least 5 sentences.
+            One conversation should contain at least 5 sentences but should contain more.
             Did you understand that?""",
-        },
+        }, 
         {
             "role": "user",
             # "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",

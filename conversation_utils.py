@@ -8,7 +8,7 @@ from audio_utils import merge_audio_files, generate_elevenlabs_audio
 output_dir = 'output/' # Where the output files will be saved
 
 ############################################
-# Save the conversation to a JSON file
+# Save the conversation text to a JSON file
 ############################################
 def save_conversation(conversation):
     base_filename = 'conversation.json'
@@ -33,14 +33,17 @@ def save_conversation(conversation):
 # Take a conversation object and generate the audio
 ############################################
 def generate_conversation(conversation):
+    audio_chunks = []
     logging.info(conversation.choices[0].message.content)
     result = json.loads(conversation.choices[0].message.content)
     save_conversation(conversation)
 
     # Loop through the conversation object and generate audio files
     for index, dialogue in enumerate(result["conversation"]):
-        generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"])
+        audio_chunks.append(generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"]))
+        # generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"])
 
     # Merge the audio files
-    input_files = [os.path.join(os.getcwd(), f"{output_dir}output{i}.mp3") for i in range(len(result["conversation"]))]
-    merge_audio_files(input_files, "output/output_merged.mp3")
+    # input_files = [os.path.join(os.getcwd(), f"{output_dir}output{i}.mp3") for i in range(len(result["conversation"]))]
+    merge_audio_files(audio_chunks, "output/output_merged.mp3")
+    print("Conversation audio generated and saved to output/output_merged.mp3")
