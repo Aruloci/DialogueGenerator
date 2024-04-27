@@ -2,12 +2,10 @@ import json
 import logging
 import os
 
-from dotenv import load_dotenv
 from openai import OpenAI
+import pandas as pd
 from audio_utils import merge_audio_files, generate_elevenlabs_audio
 
-# Load environment variables
-load_dotenv()
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -39,7 +37,7 @@ def save_conversation(conversation):
 ############################################
 # Take a conversation object and generate the audio
 ############################################
-def create_audio(conversation):
+def create_audio_file(conversation):
     audio_chunks = []
     logging.info(conversation)
     result = json.loads(conversation)
@@ -66,3 +64,11 @@ def send_openai_request(messages):
         messages=messages
     )
     return response.choices[0].message.content
+
+############################################
+# Convert conversation JSON to CSV and adjust fields to fit convTools
+############################################
+def convert_json_to_csv(conversation):
+    df = pd.DataFrame(conversation['conversation'])
+    df.to_csv("output/conversation/conversation60.csv",index=False, sep=";")
+    

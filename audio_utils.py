@@ -29,17 +29,25 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
         }
     }
     response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        print(response.headers['Content-Type'])
 
-    audio_buffer = BytesIO()
-    # Write each chunk of data to the BytesIO buffer
-    for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-        if chunk:
-            audio_buffer.write(chunk)
-    audio_buffer.seek(0) # Reset the buffer position to the beginning
-    audio_segment = AudioSegment.from_file(audio_buffer, format="mp3")
+        audio_buffer = BytesIO()
+        audio_buffer.seek(0) # Reset the buffer position to the beginning
+        # Write each chunk of data to the BytesIO buffer
+        for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+            if chunk:
+                audio_buffer.write(chunk)
+        audio_buffer.seek(0) # Reset the buffer position to the beginning
+        audio_segment = AudioSegment.from_file(audio_buffer, format="mp3")
 
-    audio_segment = clip_audio_at_pause(audio_segment, pause_extension=timing*1000) # Clip audio at pause to remove "he said" part
-    return audio_segment
+        audio_segment = clip_audio_at_pause(audio_segment, pause_extension=timing*1000) # Clip audio at pause to remove "he said" part
+        file_name = f"{output_dir}output{text_id}.mp3"
+        audio_segment.export(file_name, format="mp3") # Save the audio file
+        return audio_segment, file_name
+    else:
+        logging.error(f"Failed to fetch audio for text_id={text_id}: {response.status_code} {response.reason}")
+        return None, None 
 
 ############################################
 # Merge multiple audio files into one

@@ -1,6 +1,14 @@
 import logging
+import json
+import csv
+from dotenv import load_dotenv
 
-from conversation_utils import create_audio, send_openai_request
+from conversation_utils import send_openai_request, save_conversation
+from audio_utils import generate_elevenlabs_audio
+from convtools import audioWriter, conversationFileReader
+
+# Load environment variables
+load_dotenv()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)  # Set the logging level
@@ -47,5 +55,47 @@ messages.append({
 })
 conversation = send_openai_request(messages)
 
-# Generate conversation and process audio files
-create_audio(conversation)
+# # Generate conversation and process audio files
+# create_audio_file(conversation)
+
+save_conversation(conversation)
+
+# Generate audio files and annotate the conversation
+audio_chunks = []
+audio_annotations = []
+offset = 0.0
+conversation = json.loads(conversation)
+for index, dialogue in enumerate(conversation["conversation"]):
+    audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"])
+    
+    annotations = {
+        "path": "",
+        "file": file_name,
+        "offset": offset,
+        "type": "SPEAKER",
+        "subtype": "<NA>",
+        "speaker": dialogue["Name"],
+        "text_description": dialogue["Text"]
+    }
+    offset += round(audio_chunk.duration_seconds,1)
+    audio_annotations.append(annotations)
+    # audio_chunks.append(audio_chunk)
+# merge_audio_files(audio_chunks, "output/output_merged.mp3")
+
+# Write the annotations to a CSV file
+csv_file_path = "conversation_annotations.csv"
+with open(csv_file_path, mode="w", newline="", encoding="utf-8") as file:
+    fieldnames = ["path", "file", "offset", "type", "subtype", "speaker", "text_description"]
+    writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=";")
+    writer.writeheader()
+    for annotation in audio_annotations:
+        writer.writerow(annotation) 
+
+cf = conversationFileReader.conversationFile("conversation_annotations.csv")
+aw = audioWriter.audioWriter(cf,"output\\")
+aw.writeAudio(fileName="dialog-1-reverb.mp3",**{'reverb':0.1})
+aw.writeAudio(fileName="dialog-1-church.mp3",**{'environment':'church'})
+aw.writeAudio(fileName="dialog-1-phone.mp3",**{'transmission':'phone'})
+aw.writeAudio(fileName="dialog-1-bitrate.mp3",**{'bitrate':4})
+aw.writeAudio(fileName="dialog-1-clipping.mp3",**{'clipping':-16})
+aw.writeAudio(fileName="dialog-1-multiEffect.mp3",**{'environment':'sportscentre', 'clipping':-16, 'transmission':'phone'})

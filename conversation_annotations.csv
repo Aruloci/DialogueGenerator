@@ -1,0 +1,13 @@
+path;file;offset;type;subtype;speaker;text_description
+;output/output0.mp3;0.0;SPEAKER;<NA>;Boss;Mike, please have a seat. We need to talk about your recent performance.
+;output/output1.mp3;3.5;SPEAKER;<NA>;Mike;Sure, boss. Is there something wrong?
+;output/output2.mp3;7.4;SPEAKER;<NA>;Boss;It's about your productivity, Mike. There's been a noticeable drop this past month.
+;output/output3.mp3;13.0;SPEAKER;<NA>;Mike;I realize that, and I'm really sorry. I've been dealing with some personal issues...
+;output/output4.mp3;18.4;SPEAKER;<NA>;Boss;I understand, Mike, but -
+;output/output5.mp3;19.2;SPEAKER;<NA>;Mike;I just need a little more time to get things back on track.
+;output/output6.mp3;21.599999999999998;SPEAKER;<NA>;Boss;We've been quite flexible so far. It’s crucial to balance your personal challenges with your professional responsibilities.
+;output/output7.mp3;30.799999999999997;SPEAKER;<NA>;Mike;Understood. Could you point out specific areas where I should improve?
+;output/output8.mp3;36.699999999999996;SPEAKER;<NA>;Boss;Primarily, your time management and prioritization need work. That's where we see the major gaps.
+;output/output9.mp3;43.49999999999999;SPEAKER;<NA>;Mike;I appreciate the feedback. I'll improve on those areas immediately.
+;output/output10.mp3;48.099999999999994;SPEAKER;<NA>;Boss;Great to hear, Mike. We'll review everything in a month's time.
+;output/output11.mp3;53.099999999999994;SPEAKER;<NA>;Mike;Thank you, I won’t disappoint you.
