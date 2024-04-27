@@ -155,3 +155,4 @@ cython_debug/
 # Project related files
 output/
 ConversationAssembler/
+conversation_annotations.csv

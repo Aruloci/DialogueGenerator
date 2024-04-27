@@ -30,8 +30,6 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
     }
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        print(response.headers['Content-Type'])
-
         audio_buffer = BytesIO()
         audio_buffer.seek(0) # Reset the buffer position to the beginning
         # Write each chunk of data to the BytesIO buffer
@@ -66,11 +64,11 @@ def merge_audio_files(audio_chunks, output_file):
 ############################################
 # Clip audio when a pause is detected
 ############################################
-def clip_audio_at_pause(audio, min_silence_len=1000, silence_thresh=-50, pause_extension=500):
+def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80, pause_extension=0):
 
     # Detect non-silent chunks
     pause_detected = False
-    loop_limit = 5
+    loop_limit = 10
     loop_count = 0
     nonsilent_chunks = []
 
@@ -80,10 +78,10 @@ def clip_audio_at_pause(audio, min_silence_len=1000, silence_thresh=-50, pause_e
             min_silence_len=min_silence_len,
             silence_thresh=silence_thresh
         )
-        print(f"We are looping {loop_count}")
-        if nonsilent_chunks:
+        if len(nonsilent_chunks) > 1:
             pause_detected = True
         loop_count += 1
+        silence_thresh += 7 # Increase the silence threshold for each loop
 
     if pause_detected:
         # Calculate the end of speech by adding pause_extension to the end of the first non-silent chunk

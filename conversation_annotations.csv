@@ -1,13 +1,15 @@
 path;file;offset;type;subtype;speaker;text_description
-;output/output0.mp3;0.0;SPEAKER;<NA>;Boss;Mike, please have a seat. We need to talk about your recent performance.
-;output/output1.mp3;3.5;SPEAKER;<NA>;Mike;Sure, boss. Is there something wrong?
-;output/output2.mp3;7.4;SPEAKER;<NA>;Boss;It's about your productivity, Mike. There's been a noticeable drop this past month.
-;output/output3.mp3;13.0;SPEAKER;<NA>;Mike;I realize that, and I'm really sorry. I've been dealing with some personal issues...
-;output/output4.mp3;18.4;SPEAKER;<NA>;Boss;I understand, Mike, but -
-;output/output5.mp3;19.2;SPEAKER;<NA>;Mike;I just need a little more time to get things back on track.
-;output/output6.mp3;21.599999999999998;SPEAKER;<NA>;Boss;We've been quite flexible so far. It’s crucial to balance your personal challenges with your professional responsibilities.
-;output/output7.mp3;30.799999999999997;SPEAKER;<NA>;Mike;Understood. Could you point out specific areas where I should improve?
-;output/output8.mp3;36.699999999999996;SPEAKER;<NA>;Boss;Primarily, your time management and prioritization need work. That's where we see the major gaps.
-;output/output9.mp3;43.49999999999999;SPEAKER;<NA>;Mike;I appreciate the feedback. I'll improve on those areas immediately.
-;output/output10.mp3;48.099999999999994;SPEAKER;<NA>;Boss;Great to hear, Mike. We'll review everything in a month's time.
-;output/output11.mp3;53.099999999999994;SPEAKER;<NA>;Mike;Thank you, I won’t disappoint you.
+;output/output0.mp3;0.0;SPEAKER;<NA>;Interviewer;Good afternoon, sir. It's an honor to speak with you today about your experiences during World War II.
+;output/output1.mp3;4.8;SPEAKER;<NA>;Veteran;Thank you, young lady. It’s... it’s been a long time ago now, but I remember it quite clearly.
+;output/output2.mp3;12.5;SPEAKER;<NA>;Interviewer;Can you share where you were stationed during the war?
+;output/output3.mp3;16.1;SPEAKER;<NA>;Veteran;I was mainly in Europe, fought in Italy and France. Part of the 1st Infantry Division, as a foot soldier.
+;output/output4.mp3;24.0;SPEAKER;<NA>;Interviewer;That must have been incredibly challenging, dealing with such intense situations.
+;output/output5.mp3;29.5;SPEAKER;<NA>;Veteran;"Yes,<break time=""0.7s"" /> yes, it was tough. We saw...<break time=""0.5s"" /> terribly difficult things."
+;output/output6.mp3;35.7;SPEAKER;<NA>;Interviewer;Is there a particular memory that stands out to you from those days?
+;output/output7.mp3;41.1;SPEAKER;<NA>;Veteran;"The camaraderie we built,<break time=""0.6s"" /> it was something extraordinary. You truly depended on each other for everything."
+;output/output8.mp3;48.5;SPEAKER;<NA>;Interviewer;How did you and your comrades cope with the constant stress and danger?
+;output/output9.mp3;53.8;SPEAKER;<NA>;Veteran;We would talk about our homes, our families, and dream about what we would do once the war was over. Those thoughts gave us hope.
+;output/output10.mp3;62.099999999999994;SPEAKER;<NA>;Interviewer;Looking back, how do you feel about those experiences today?
+;output/output11.mp3;67.6;SPEAKER;<NA>;Veteran;I feel a mix of pride and sorrow. It was a hard time, but I'm proud of what we achieved together.
+;output/output12.mp3;75.0;SPEAKER;<NA>;Interviewer;Thank you so much for sharing your story with us, and thank you deeply for your service.
+;output/output13.mp3;81.5;SPEAKER;<NA>;Veteran;You're welcome. It’s crucial that we don’t forget those times.
