@@ -2,8 +2,15 @@ import json
 import logging
 import os
 
+from dotenv import load_dotenv
+from openai import OpenAI
 from audio_utils import merge_audio_files, generate_elevenlabs_audio
 
+# Load environment variables
+load_dotenv()
+
+# Initialize OpenAI client
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 output_dir = 'output/' # Where the output files will be saved
 
@@ -27,15 +34,15 @@ def save_conversation(conversation):
 
     # Write the generated conversation to the file
     with open(filename, 'w') as f:
-        f.write(conversation.choices[0].message.content)
+        f.write(conversation)
 
 ############################################
 # Take a conversation object and generate the audio
 ############################################
-def generate_conversation(conversation):
+def create_audio(conversation):
     audio_chunks = []
-    logging.info(conversation.choices[0].message.content)
-    result = json.loads(conversation.choices[0].message.content)
+    logging.info(conversation)
+    result = json.loads(conversation)
     save_conversation(conversation)
 
     # Loop through the conversation object and generate audio files
@@ -47,3 +54,15 @@ def generate_conversation(conversation):
     # input_files = [os.path.join(os.getcwd(), f"{output_dir}output{i}.mp3") for i in range(len(result["conversation"]))]
     merge_audio_files(audio_chunks, "output/output_merged.mp3")
     print("Conversation audio generated and saved to output/output_merged.mp3")
+
+############################################
+# Send a request to the OpenAI API
+# Documentation: https://platform.openai.com/docs/guides/text-generation
+############################################
+def send_openai_request(messages):
+    response = client.chat.completions.create(
+        model="gpt-4-turbo",
+        response_format={"type": "json_object"},
+        messages=messages
+    )
+    return response.choices[0].message.content

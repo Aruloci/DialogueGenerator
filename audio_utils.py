@@ -2,6 +2,7 @@ import os
 import requests
 from io import BytesIO
 
+import logging
 from pydub import AudioSegment
 from pydub.silence import detect_nonsilent
 
@@ -60,17 +61,28 @@ def merge_audio_files(audio_chunks, output_file):
 def clip_audio_at_pause(audio, min_silence_len=1000, silence_thresh=-50, pause_extension=500):
 
     # Detect non-silent chunks
-    nonsilent_chunks = detect_nonsilent(
-        audio,
-        min_silence_len=min_silence_len,
-        silence_thresh=silence_thresh
-    )
+    pause_detected = False
+    loop_limit = 5
+    loop_count = 0
+    nonsilent_chunks = []
 
-    # If none are detected, return the original audio
-    if not nonsilent_chunks:
+    while not pause_detected and loop_count < loop_limit:
+        nonsilent_chunks = detect_nonsilent(
+            audio,
+            min_silence_len=min_silence_len,
+            silence_thresh=silence_thresh
+        )
+        print(f"We are looping {loop_count}")
+        if nonsilent_chunks:
+            pause_detected = True
+        loop_count += 1
+
+    if pause_detected:
+        # Calculate the end of speech by adding pause_extension to the end of the first non-silent chunk
+        end_of_speech = nonsilent_chunks[0][1] + pause_extension
+        clipped_audio = audio[:end_of_speech]
+        return AudioSegment.silent(duration=pause_extension) + clipped_audio
+    else:
+        # Log a warning and return the original audio if no pauses are detected
+        logging.warning("Could not detect a pause in the audio. Returning the original audio.")
         return audio
-
-    end_of_speech = nonsilent_chunks[0][1] 
-    clipped_audio = audio[:end_of_speech]
-
-    return AudioSegment.silent(duration=pause_extension) + clipped_audio
