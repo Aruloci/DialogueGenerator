@@ -21,7 +21,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
         "xi-api-key": os.environ.get("ELEVENLABS_API_KEY")
     }
     data = {
-        "text": f'{text}<break time="4.0s" />he said {emotion}ly.',
+        "text": f'{text},,,<break time="4.0s" />he said {emotion}ly.',
         "model_id": "eleven_monolingual_v1",
         "voice_settings": {
             "stability": 0.5,
@@ -31,15 +31,15 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
         audio_buffer = BytesIO()
-        audio_buffer.seek(0) # Reset the buffer position to the beginning
-        # Write each chunk of data to the BytesIO buffer
+
         for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
             if chunk:
                 audio_buffer.write(chunk)
         audio_buffer.seek(0) # Reset the buffer position to the beginning
         audio_segment = AudioSegment.from_file(audio_buffer, format="mp3")
 
-        audio_segment = clip_audio_at_pause(audio_segment, pause_extension=timing*1000) # Clip audio at pause to remove "he said" part
+        audio_segment = clip_audio_at_pause(audio_segment) # Clip audio at pause to remove "he said" part
+        audio_segment = add_pause(audio_segment, pause_duration=timing * 1000) # Add a pause at the end of the audio
         file_name = f"{output_dir}output{text_id}.mp3"
         audio_segment.export(file_name, format="mp3") # Save the audio file
         return audio_segment, file_name
@@ -64,7 +64,7 @@ def merge_audio_files(audio_chunks, output_file):
 ############################################
 # Clip audio when a pause is detected
 ############################################
-def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80, pause_extension=0):
+def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80):
 
     # Detect non-silent chunks
     pause_detected = False
@@ -85,10 +85,17 @@ def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80, pause_e
 
     if pause_detected:
         # Calculate the end of speech by adding pause_extension to the end of the first non-silent chunk
-        end_of_speech = nonsilent_chunks[0][1] + pause_extension
+        end_of_speech = nonsilent_chunks[0][1]
         clipped_audio = audio[:end_of_speech]
-        return AudioSegment.silent(duration=pause_extension) + clipped_audio
+        return clipped_audio
     else:
         # Log a warning and return the original audio if no pauses are detected
         logging.warning("Could not detect a pause in the audio. Returning the original audio.")
         return audio
+    
+############################################
+# Add a pause to the audio
+############################################
+def add_pause(audio, pause_duration=1000):
+    pause = AudioSegment.silent(duration=pause_duration)
+    return pause + audio

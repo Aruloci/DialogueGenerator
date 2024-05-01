@@ -17,12 +17,11 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level
 messages=[
     {
         "role": "system",
-        "content": """You are an expert in generating conversations based on the users requirements. Your goal is to generate a natural conversation 
+        "content": """You are a scriptwriter tasked with creating a highly realistic and emotionally engaging dialogue. Your goal is to generate a natural conversation 
         based on the scenario set by the user. To make a conversation feel more natural you should annotate every sentence with fitting emotions. Speakers
         should also be able to interrupt or talk over each other. To generate the conversation stick to the following format: 
             - Name: Name of the speaker. If no names are given generate names.
-            - Text: The generated sentence for the speaker. Use ... to indicate a pause or stutter. To implement a sequence where nothing is said use '<break time="1.1s" />' like
-              this: 'Hello<break time="0.8s" />. How are you?' The number in the break tag indicates the length of the pause in seconds.
+            - Text: The generated sentence for the speaker. Use ... to indicate a pause or stutter. For a longer pause use ,,,.
               Such a pause should never be longer than 2 seconds. Use comic speech like "Uhm", "Hmph", "Argh" to create a more natural conversation.
             - Emotion: The corresponding emotion of the speakers sentence.
             - Timing: The time in seconds between the current and previous sentence as double. Use 0.0 if the sentence starts immediately after the last one. Use any positive like 0.5 or 1.0 as
@@ -37,7 +36,8 @@ messages=[
         "role": "user",
         # "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
         # "content": "Generate a dialog between a boss and his employee about his bad performance at work.",
-        "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
+        # "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
+        "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
     }
 ]
 
@@ -53,23 +53,23 @@ messages.append({
     "role": "user",
     "content": """
         Optimize the timing (pauses) and emotions of the conversation to make it sound more natural. The pauses
-        should rarely be longer than 1 second. The conversation should feel like a real dialogue 
-        between real people. Besides the timing add the voice ID from ElevenLabs. You can choose from the following IDs:
+        should rarely be longer than 0.5 seconds. The conversation should feel like a real dialogue 
+        between real people. Include filler words like "uhm", "uh", "you know" etc. to create a more natural conversation. 
+        Adjust the dialogue where needed to make the conversation seem more natural.
+        Add the voice ID from ElevenLabs. You can choose from the following IDs:
         - NOpBlnGInO9m6vDvFkFC : Old Male with American accent
         - Mr0lS24b2pkDEz6noGEd : Young Female with American accent
         - otVgZoZFXk2SZDc0eBdZ : Young Female with Australian accent
         - WLKp2jV6nrS8aMkPPDRO : Middle-aged Male with Australian accent
         - x3gYeuNB0kLLYxOZsaSh : Middle-aged Male with Indian accent
         - aTxZrSrp47xsP6Ot4Kgd : Young Female with African American accent
-        Make sure to use the same voice ID for the same speaker.
+        Make sure to use the same voice ID for the same speaker and choose a fitting voice for the speaker.
+        The voice must match the speakers name. If the speaker has a male name then choose a male voice. 
+        If the name is female then choose a fitting female voice.
         Keep the JSON format and the structure of the conversation.
         """
 })
 conversation = send_openai_request(messages)
-
-# # Generate conversation and process audio files
-# create_audio_file(conversation)
-
 save_conversation(conversation)
 
 # Generate audio files and annotate the conversation
@@ -83,13 +83,13 @@ for index, dialogue in enumerate(conversation["conversation"]):
     annotations = {
         "path": "",
         "file": file_name,
-        "offset": offset,
+        "offset": round(offset,1),
         "type": "SPEAKER",
         "subtype": "<NA>",
         "speaker": dialogue["Name"],
         "text_description": dialogue["Text"]
     }
-    offset += round(audio_chunk.duration_seconds,1)
+    offset += audio_chunk.duration_seconds
     audio_annotations.append(annotations)
     # audio_chunks.append(audio_chunk)
 # merge_audio_files(audio_chunks, "output/output_merged.mp3")
