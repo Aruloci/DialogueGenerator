@@ -4,7 +4,7 @@ from io import BytesIO
 
 import logging
 from pydub import AudioSegment
-from pydub.silence import detect_nonsilent
+from pydub.silence import detect_nonsilent, detect_silence
 
 
 output_dir = 'output/' # Where the output files will be saved
@@ -38,8 +38,8 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
         audio_buffer.seek(0) # Reset the buffer position to the beginning
         audio_segment = AudioSegment.from_file(audio_buffer, format="mp3")
 
-        audio_segment = clip_audio_at_pause(audio_segment) # Clip audio at pause to remove "he said" part
-        audio_segment = add_pause(audio_segment, pause_duration=timing * 1000) # Add a pause at the end of the audio
+        audio_segment = clip_audio_at_pause2(audio_segment) # Clip audio at pause to remove "he said" part
+        # audio_segment = add_pause(audio_segment, pause_duration=timing * 1000) # Add a pause at the end of the audio
         file_name = f"{output_dir}output{text_id}.mp3"
         audio_segment.export(file_name, format="mp3") # Save the audio file
         return audio_segment, file_name
@@ -62,7 +62,7 @@ def merge_audio_files(audio_chunks, output_file):
     merged_audio.export(output_file, format="mp3")
 
 ############################################
-# Clip audio when a pause is detected
+# Clip audio when a pause is detected using detect_nonsilent
 ############################################
 def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80):
 
@@ -86,6 +86,39 @@ def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80):
     if pause_detected:
         # Calculate the end of speech by adding pause_extension to the end of the first non-silent chunk
         end_of_speech = nonsilent_chunks[0][1]
+        clipped_audio = audio[:end_of_speech]
+        return clipped_audio
+    else:
+        # Log a warning and return the original audio if no pauses are detected
+        logging.warning("Could not detect a pause in the audio. Returning the original audio.")
+        return audio
+    
+############################################
+# Clip audio when a pause is detected using detect_silence
+############################################
+def clip_audio_at_pause2(audio, min_silence_len=2000, silence_thresh=-80):
+
+    # Detect non-silent chunks
+    pause_detected = False
+    loop_limit = 10
+    loop_count = 0
+    nonsilent_chunks = []
+
+    while not pause_detected and loop_count < loop_limit:
+        nonsilent_chunks = detect_silence(
+            audio,
+            min_silence_len=min_silence_len,
+            silence_thresh=silence_thresh
+        )
+        if len(nonsilent_chunks) > 0:
+            pause_detected = True
+        loop_count += 1
+        silence_thresh += 4 # Increase the silence threshold for each loop
+        min_silence_len -= 75 # Decrease the minimum silence length for each loop
+
+    if pause_detected:
+        # Calculate the end of speech by adding pause_extension to the end of the first non-silent chunk
+        end_of_speech = nonsilent_chunks[0][0]
         clipped_audio = audio[:end_of_speech]
         return clipped_audio
     else:
