@@ -14,6 +14,7 @@ load_dotenv()
 # Set up logging
 logging.basicConfig(level=logging.INFO)  # Set the logging level
 
+# Create initial conversation with focus on dialogue content
 messages=[
     {
         "role": "system",
@@ -36,12 +37,10 @@ messages=[
         "role": "user",
         # "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
         # "content": "Generate a dialog between a boss and his employee about his bad performance at work.",
-        # "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
-        "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
+        "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
+        # "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
     }
 ]
-
-# Create initial conversation with focus on dialogue content
 conversation = send_openai_request(messages)
 messages.append({
     "role": "assistant",
@@ -70,8 +69,6 @@ messages.append({
         Keep the JSON format and the structure of the conversation.
         """
 })
-
-# Create initial conversation with focus on dialogue content
 conversation = send_openai_request(messages)
 messages.append({
     "role": "assistant",
@@ -79,7 +76,7 @@ messages.append({
 })
 save_conversation(conversation) # Save the conversation to a JSON file
 
-# Optimize the timing and emotions of the conversation
+# Suggest a background environment and reverb effect for the conversation
 messages.append({
     "role": "user",
     "content": """
@@ -107,6 +104,8 @@ messages.append({
 })
 post_processing = send_openai_request(messages)
 post_processing = json.loads(post_processing)
+background_effect = post_processing["background_effect"]
+reverb_effect = post_processing["reverb_effect"]
 
 # Generate audio files and annotate the conversation
 audio_chunks = []
@@ -131,17 +130,17 @@ for index, dialogue in enumerate(conversation["conversation"]):
 # merge_audio_files(audio_chunks, "output/output_merged.mp3")
 
 # Add the background audio effect to the conversation
-background_effect = post_processing["background_effect"]
-background_effect_annotations = {
-    "path": "",
-    "file": f"convtools\\ambient_noise\{background_effect}.mp3",
-    "offset": 0,
-    "type": "NON-SPEECH",
-    "subtype": "other",
-    "speaker": "<NA>",
-    "text_description": f"{background_effect} background noise"
-}
-audio_annotations.append(background_effect_annotations)
+if reverb_effect != "Phone":
+    background_effect_annotations = {
+        "path": "",
+        "file": f"convtools\\ambient_noise\{background_effect}.mp3",
+        "offset": 0,
+        "type": "NON-SPEECH",
+        "subtype": "other",
+        "speaker": "<NA>",
+        "text_description": f"{background_effect} background noise"
+    }
+    audio_annotations.append(background_effect_annotations)
 
 
 # Write the annotations to a CSV file
@@ -155,7 +154,6 @@ with open(csv_file_path, mode="w", newline="", encoding="utf-8") as file:
 
 # Add the reverb effect to the audio files
 conv_file = conversationFileReader.conversationFile("conversation_annotations.csv")
-reverb_effect = post_processing["reverb_effect"]
 aw = audioWriter.audioWriter(conv_file,"output\\")
 if reverb_effect == "Phone":
     aw.writeAudio(fileName="dialog-1-phone.mp3",**{'transmission':'phone'})

@@ -21,7 +21,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
         "xi-api-key": os.environ.get("ELEVENLABS_API_KEY")
     }
     data = {
-        "text": f'{text},,,<break time="4.0s" />he said {emotion}ly.',
+        "text": f'{text},,,,,,.<break time="4.0s" />he said {emotion}ly.',
         "model_id": "eleven_monolingual_v1",
         "voice_settings": {
             "stability": 0.5,
@@ -85,6 +85,7 @@ def clip_audio_at_pause(audio, min_silence_len=2000, silence_thresh=-80):
 
     if pause_detected:
         # Calculate the end of speech by adding pause_extension to the end of the first non-silent chunk
+        nonsilent_chunks[0][1] += 150
         end_of_speech = nonsilent_chunks[0][1]
         clipped_audio = audio[:end_of_speech]
         return clipped_audio
