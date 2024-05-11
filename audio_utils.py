@@ -7,12 +7,10 @@ from pydub import AudioSegment
 from pydub.silence import detect_nonsilent, detect_silence
 
 
-output_dir = 'output/' # Where the output files will be saved
-
 ############################################
 # Text to speech using the Eleven Labs API
 ############################################
-def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int, emotion: str = "neutral"):
+def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int, emotion: str = "neutral", output_dir: str = "output/"):
     CHUNK_SIZE = 1024
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{speaker}"
     headers = {
@@ -40,7 +38,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
 
         audio_segment = clip_audio_at_pause2(audio_segment) # Clip audio at pause to remove "he said" part
         # audio_segment = add_pause(audio_segment, pause_duration=timing * 1000) # Add a pause at the end of the audio
-        file_name = f"{output_dir}output{text_id}.mp3"
+        file_name = os.path.join(output_dir, f"output{text_id}.mp3")
         audio_segment.export(file_name, format="mp3") # Save the audio file
         return audio_segment, file_name
     else:

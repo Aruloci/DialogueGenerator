@@ -21,7 +21,7 @@ class conversationFileLine:
 class conversationFile:
     def __init__(self, file_path):
         self.file_path = file_path
-        self.inputFolder = os.path.dirname(os.path.abspath(file_path))
+        self.inputFolder = os.getcwd()
         self.lines = []
         self.readConversation()
         self.sampleRate = self.getSampleRate()
@@ -105,7 +105,7 @@ class conversationFile:
         sampleRates = []
         audioFileNames = []
         for audioFile in audioFiles:
-            audioFileNames.append(os.path.basename(audioFile))
+            audioFileNames.append(os.path.relpath(audioFile))
             with AudioFile(audioFile) as af:
                 sampleRates.append(af.samplerate)
         if all(sampleRate == sampleRates[0] for sampleRate in sampleRates):

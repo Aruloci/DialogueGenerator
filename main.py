@@ -1,9 +1,10 @@
+import os
 import logging
 import json
 import csv
 from dotenv import load_dotenv
 
-from conversation_utils import send_openai_request, save_conversation
+from conversation_utils import send_openai_request, save_conversation, get_next_conversation_directory
 from audio_utils import generate_elevenlabs_audio
 from convtools import audioWriter, conversationFileReader
 
@@ -14,6 +15,7 @@ load_dotenv()
 # Set up logging
 logging.basicConfig(level=logging.INFO)  # Set the logging level
 
+output_dir = get_next_conversation_directory(sub_dir="user1")
 # Create initial conversation with focus on dialogue content
 messages=[
     {
@@ -66,6 +68,7 @@ messages.append({
         Make sure to use the same voice ID for the same speaker and choose a fitting voice for the speaker.
         The voice must match the speakers name. If the speaker has a male name then choose a male voice. 
         If the name is female then choose a fitting female voice.
+        Remove any ; from the generated conversation.
         Keep the JSON format and the structure of the conversation.
         """
 })
@@ -74,7 +77,7 @@ messages.append({
     "role": "assistant",
     "content": conversation
 })
-save_conversation(conversation) # Save the conversation to a JSON file
+save_conversation(conversation, output_dir=output_dir) # Save the conversation to a JSON file
 
 # Suggest a background environment and reverb effect for the conversation
 messages.append({
@@ -113,7 +116,7 @@ audio_annotations = []
 offset = 0.0
 conversation = json.loads(conversation)
 for index, dialogue in enumerate(conversation["conversation"]):
-    audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"])
+    audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"], output_dir=output_dir)
     
     annotations = {
         "path": "",
@@ -144,7 +147,7 @@ if reverb_effect != "Phone":
 
 
 # Write the annotations to a CSV file
-csv_file_path = "conversation_annotations.csv"
+csv_file_path = os.path.join(output_dir, "conversation_annotations.csv")
 with open(csv_file_path, mode="w", newline="", encoding="utf-8") as file:
     fieldnames = ["path", "file", "offset", "type", "subtype", "speaker", "text_description"]
     writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=";")
@@ -153,8 +156,8 @@ with open(csv_file_path, mode="w", newline="", encoding="utf-8") as file:
         writer.writerow(annotation) 
 
 # Add the reverb effect to the audio files
-conv_file = conversationFileReader.conversationFile("conversation_annotations.csv")
-aw = audioWriter.audioWriter(conv_file,"output\\")
+conv_file = conversationFileReader.conversationFile(csv_file_path)
+aw = audioWriter.audioWriter(conv_file, output_dir)
 if reverb_effect == "Phone":
     aw.writeAudio(fileName="dialog-1-phone.mp3",**{'transmission':'phone'})
 else:

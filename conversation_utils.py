@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -10,27 +11,15 @@ from audio_utils import merge_audio_files, generate_elevenlabs_audio
 # Initialize OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-output_dir = 'output/' # Where the output files will be saved
-
 ############################################
 # Save the conversation text to a JSON file
 ############################################
-def save_conversation(conversation):
-    base_filename = 'conversation.json'
-    conv_dir = os.path.join(output_dir, 'conversation')
-
-    # Find the next available filename
-    conv_counter = 1
-    while True:
-        filename = os.path.join(conv_dir, base_filename)
-        if conv_counter > 1:
-            filename = os.path.join(conv_dir, f'conversation{conv_counter}.json')
-        if os.path.exists(filename):
-            conv_counter += 1
-        else:
-            break
+def save_conversation(conversation, output_dir="output"):
+    # Create a new directory for the conversation
+    os.makedirs(output_dir)
 
     # Write the generated conversation to the file
+    filename = os.path.join(output_dir, "conversation.json")
     with open(filename, 'w') as f:
         f.write(conversation)
 
@@ -66,9 +55,22 @@ def send_openai_request(messages):
     return response.choices[0].message.content
 
 ############################################
-# Convert conversation JSON to CSV and adjust fields to fit convTools
+# Get next available conversation directory
 ############################################
-def convert_json_to_csv(conversation):
-    df = pd.DataFrame(conversation['conversation'])
-    df.to_csv("output/conversation/conversation60.csv",index=False, sep=";")
+def get_next_conversation_directory(sub_dir="user"):
+    # Create the user directory if it doesn't exist
+    output_dir = os.path.join("output", sub_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Find the next available directory
+    existing_directories = [d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d))]
+    existing_directories.sort(key=lambda x: int(x.split("_")[-1]))
+    if existing_directories:
+        last_directory = existing_directories[-1]
+        next_directory_number = int(last_directory.split("_")[-1]) + 1
+    else:
+        next_directory_number = 1  # Start with conversation_1 if no directories exist yet
+    
+    return os.path.join(output_dir, f"conversation_{next_directory_number}")
     
