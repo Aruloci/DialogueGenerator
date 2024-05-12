@@ -8,9 +8,6 @@ import pandas as pd
 from audio_utils import merge_audio_files, generate_elevenlabs_audio
 
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
 ############################################
 # Save the conversation text to a JSON file
 ############################################
@@ -46,7 +43,10 @@ def create_audio_file(conversation):
 # Send a request to the OpenAI API
 # Documentation: https://platform.openai.com/docs/guides/text-generation
 ############################################
-def send_openai_request(messages):
+def send_openai_request(messages, api_key=os.environ.get("OPENAI_API_KEY")):
+    # Initialize OpenAI client
+    client = OpenAI(api_key=api_key)
+
     response = client.chat.completions.create(
         model="gpt-4-turbo",
         response_format={"type": "json_object"},
@@ -73,4 +73,21 @@ def get_next_conversation_directory(sub_dir="user"):
         next_directory_number = 1  # Start with conversation_1 if no directories exist yet
     
     return os.path.join(output_dir, f"conversation_{next_directory_number}")
+
+############################################
+# Get the current conversation directory
+############################################
+def get_current_conversation_directory(sub_dir="user"):
+    output_dir = os.path.join("output", sub_dir)
+
+    # Find the current conversation directory
+    existing_directories = [d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d))]
+    existing_directories.sort(key=lambda x: int(x.split("_")[-1]))
+    if existing_directories:
+        current_directory = existing_directories[-1]
+    else:
+        current_directory = get_next_conversation_directory(sub_dir)
+    
+    return os.path.join(output_dir, current_directory)
+ 
     

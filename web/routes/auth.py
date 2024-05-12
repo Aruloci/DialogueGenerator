@@ -13,7 +13,7 @@ def register():
                      email=request.form.get("email"))
         db.session.add(user)
         db.session.commit()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('web.index'))
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -21,9 +21,9 @@ def login():
         user = Users.query.filter_by(username=request.form.get("username")).first()
         if user and user.password == request.form.get("password"):
             login_user(user)
-        return redirect(url_for('main.index'))
+        return redirect(url_for('web.index'))
 
 @auth_bp.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("main.index"))
+    return redirect(url_for("web.index"))

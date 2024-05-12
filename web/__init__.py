@@ -17,11 +17,13 @@ def create_app():
     
     # ROUTES
     from web.routes.auth import auth_bp
-    from web.routes.main import main_bp
+    from web.routes.web import web_bp
     from web.routes.api_keys import api_keys
+    from web.routes.api import api
     app.register_blueprint(auth_bp)
-    app.register_blueprint(main_bp)
+    app.register_blueprint(web_bp)
     app.register_blueprint(api_keys)
+    app.register_blueprint(api)
 
     with app.app_context():
         db.create_all()

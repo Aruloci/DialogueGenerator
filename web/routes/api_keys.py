@@ -23,3 +23,20 @@ def update_api_key():
     db.session.commit()
     
     return jsonify({'status': 'success', 'message': 'API Key updated successfully'})
+
+@login_required
+def get_user_api_key(service):
+    possible_services = ['OpenAI', 'ElevenLabs']
+    if service not in possible_services:
+        raise ValueError(f"Service {service} not supported. Choose from {possible_services}")
+    else:
+        key_instance = ApiKey.query.filter_by(user_id=current_user.id, service=service).first()
+    return key_instance.api_key if key_instance else None
+
+@login_required
+def get_openai_api_key():
+    return get_user_api_key('OpenAI')
+
+@login_required
+def get_elevenlabs_api_key():
+    return get_user_api_key('ElevenLabs')

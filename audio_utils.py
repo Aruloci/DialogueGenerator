@@ -10,7 +10,7 @@ from pydub.silence import detect_nonsilent, detect_silence
 ############################################
 # Text to speech using the Eleven Labs API
 ############################################
-def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int, emotion: str = "neutral", output_dir: str = "output/"):
+def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int, emotion: str = "neutral", output_dir: str = "output/", api_key = os.environ.get("ELEVENLABS_API_KEY")):
     CHUNK_SIZE = 1024
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{speaker}"
     headers = {

@@ -87,7 +87,7 @@ messages.append({
         environment should match the setting of the conversation. The environment should be a fitting
         background noise to the conversation. You can choose from the following environments:
         - Restaurant
-        - Trainstation
+        - Train
         - Traffic
         - Quayside
 
@@ -161,7 +161,7 @@ aw = audioWriter.audioWriter(conv_file, output_dir)
 if reverb_effect == "Phone":
     aw.writeAudio(fileName="dialog-1-phone.mp3",**{'transmission':'phone'})
 else:
-    aw.writeAudio(fileName="dialog-1-church.mp3",**{'environment':reverb_effect})
+    aw.writeAudio(fileName="dialog-1.mp3",**{'environment':reverb_effect})
 
 # write the RTTM and TextGrid files
 rw = rttmWriter.rttmWriter(conv_file, output_dir)

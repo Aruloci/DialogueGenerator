@@ -3,17 +3,17 @@ from flask_login import login_required, current_user
 
 from web.models.ApiKey import ApiKey
 
-main_bp = Blueprint('main', __name__)
+web_bp = Blueprint('web', __name__)
 
-@main_bp.route("/")
+@web_bp.route("/")
 def index():
     return render_template("index.html")
 
-@main_bp.route("/create")
+@web_bp.route("/create")
 def create():
     return render_template("create_set.html")
 
-@main_bp.route("/keys")
+@web_bp.route("/keys")
 @login_required
 def keys():
     keys = ApiKey.query.filter_by(user_id=current_user.id).all()

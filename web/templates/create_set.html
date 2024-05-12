@@ -1,9 +1,136 @@
-{% extends '_base.html' %}
+{% extends 'components/_base.html' %}
 {% block title %}Create testset{% endblock %}
 {% block content %}
 
 <div class="container">
     <h1>Create Testset</h1>
+    <div class="container my-5">
+        <div class="input-area border p-4">
+            <h2 class="mb-4">Generate dialogue</h2>
+            <p>This tool allows you to craft custom dialogues based on your input.
+                Simply describe the scenario you envision, and our tool will generate the
+                conversation text for you. Review and adjust the text as needed.
+                Once satisfied, you can proceed to convert this text into dynamic audio files,
+                complete with voice selections to fit the dialogue's tone and character.</p>
+            <div class="mb-3">
+                <label for="conversationPrompt">Describe the conversation</label>
+                <textarea class="form-control" id="conversationPrompt"
+                    placeholder="Create a conversation of an elderly couple discussing their weekend plans."
+                    id="floatingTextarea2" style="height: 100px"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="conversationCount" class="form-label">Number of Conversations</label>
+                <input type="range" class="form-range" min="1" max="10" step="1" id="conversationCount" disabled>
+                <span id="conversationCountDisplay">1</span>
+            </div>
+            <button class="btn btn-primary" type="submit" onclick="generateConversation()" id="generateConversationBtn">
+                <span id="btnText">Generate Conversation</span>
+                <span id="btnSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                    style="display: none;"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container my-5" id="conversationOutput" style="display: none;">
+        <div class="border p-4">
+            <h2>Generated Conversation</h2>
+            <ul id="conversationList" class="list-group mb-3"></ul>
+            <button class="btn btn-primary" type="submit" onclick="generateAudio()" id="generateAudioBtn">
+                <span id="audioBtnText">Generate Audio</span>
+                <span id="audioBtnSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                    style="display: none;"></span>
+            </button>
+        </div>
+    </div>
 </div>
+<script>
+    var conversationData = null;
+
+    function generateConversation() {
+        var promptFld = $('#conversationPrompt');
+        var prompt = promptFld.val();
+        var btn = $('#generateConversationBtn');
+        var btnText = $('#btnText');
+        var btnSpinner = $('#btnSpinner');
+        var conversationList = $('#conversationList');
+
+        promptFld.prop('disabled', true);
+        btn.prop('disabled', true);
+        btnText.hide();
+        btnSpinner.show();
+
+        $.ajax({
+            url: '/api/conversations',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ dialoguePrompt: prompt }),
+            success: function (response) {
+                conversationData = response; // Save the conversation data for later use
+                conversationList.empty();
+                if (response.status === "success") {
+                    var innerConversation = JSON.parse(response.conversation);
+                    if (innerConversation.conversation && innerConversation.conversation.length > 0) {
+                        innerConversation.conversation.forEach(function (entry) {
+                            var listItem = $('<li class="list-group-item"></li>');
+                            listItem.html(`<strong>${entry.Name}</strong>: ${entry.Text} <br>
+                                       <small>Emotion: ${entry.Emotion}, Timing: ${entry.Timing}s</small>`);
+                            conversationList.append(listItem);
+                        });
+                        $('#conversationOutput').show();
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            },
+            complete: function () {
+                promptFld.prop('disabled', false);
+                btn.prop('disabled', false);
+                btnSpinner.hide();
+                btnText.show();
+            }
+        });
+    }
+
+    function generateAudio() {
+        var btn = $('#generateAudioBtn');
+        var btnText = $('#audioBtnText');
+        var btnSpinner = $('#audioBtnSpinner');
+
+        // Disable the button and show the spinner while processing
+        btn.prop('disabled', true);
+        btnText.hide();
+        btnSpinner.show();
+
+        // Make the AJAX POST request to the specified endpoint
+        $.ajax({
+            url: '/api/conversations/audio',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ 
+                conversationData: conversationData.conversation,
+                conversationHistory: conversationData.conversation_history }),
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error generating audio:', error);
+            },
+            complete: function () {
+                // Re-enable the button and reset the UI
+                btn.prop('disabled', false);
+                btnSpinner.hide();
+                btnText.show();
+            }
+        });
+    }
+
+    // Enable the range input
+    document.onload = document.getElementById('conversationCount').value = 1;
+    document.getElementById('conversationCount').addEventListener('input', function () {
+        document.getElementById('conversationCountDisplay').textContent = this.value;
+    });
+</script>
+
 
 {% endblock %}
