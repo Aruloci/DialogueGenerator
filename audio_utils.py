@@ -16,7 +16,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
     headers = {
         "Accept": "audio/mpeg",
         "Content-Type": "application/json",
-        "xi-api-key": os.environ.get("ELEVENLABS_API_KEY")
+        "xi-api-key": api_key
     }
     data = {
         "text": f'{text},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.<break time="4.0s" />he said {emotion}ly.',
@@ -43,7 +43,9 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, timing: int
         return audio_segment, file_name
     else:
         logging.error(f"Failed to fetch audio for text_id={text_id}: {response.status_code} {response.reason}")
-        return None, None 
+        if response.status_code == 401:
+            return {"error": "Invalid API key. Please check your API key and try again."}, None
+        return {"error": f"{response.status_code} {response.reason}"}, None
 
 ############################################
 # Merge multiple audio files into one

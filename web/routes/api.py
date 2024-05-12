@@ -45,6 +45,8 @@ def create_conversation():
         }
     ]
     conversation = send_openai_request(messages, openai_api_key)
+    if 'error' in conversation:
+        return jsonify({"message": conversation['error']}), 400
     messages.append({
         "role": "assistant",
         "content": conversation
@@ -74,6 +76,8 @@ def create_conversation():
             """
     })
     conversation = send_openai_request(messages, openai_api_key)
+    if 'error' in conversation:
+        return jsonify({"message": conversation['error']}), 400
     messages.append({
         "role": "assistant",
         "content": conversation
@@ -121,6 +125,8 @@ def create_audio():
             """
     })
     post_processing = send_openai_request(messages, openai_api_key)
+    if 'error' in conversation:
+        return jsonify({"message": conversation['error']}), 400
     post_processing = json.loads(post_processing)
     background_effect = post_processing["background_effect"]
     reverb_effect = post_processing["reverb_effect"]
@@ -131,6 +137,8 @@ def create_audio():
     conversation = json.loads(conversation)
     for index, dialogue in enumerate(conversation["conversation"]):
         audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"], output_dir=output_dir, api_key=elevenlabs_api_key)
+        if 'error' in audio_chunk:
+            return jsonify({"message": audio_chunk['error']}), 400
         
         annotations = {
             "path": "",

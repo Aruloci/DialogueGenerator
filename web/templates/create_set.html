@@ -23,23 +23,43 @@
                 <input type="range" class="form-range" min="1" max="10" step="1" id="conversationCount" disabled>
                 <span id="conversationCountDisplay">1</span>
             </div>
-            <button class="btn btn-primary" type="submit" onclick="generateConversation()" id="generateConversationBtn">
-                <span id="btnText">Generate Conversation</span>
-                <span id="btnSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    style="display: none;"></span>
-            </button>
+            <div class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit" onclick="generateConversation()"
+                        id="generateConversationBtn">
+                        <span id="btnText">Generate Conversation</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            style="display: none;"></span>
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <span id="generateConversationError" class="form-text"
+                        style="color: rgb(188, 0, 0); font-weight: bold">
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Conversation Output -->
     <div class="container my-5" id="conversationOutput" style="display: none;">
         <div class="border p-4">
             <h2>Generated Conversation</h2>
             <ul id="conversationList" class="list-group mb-3"></ul>
-            <button class="btn btn-primary" type="submit" onclick="generateAudio()" id="generateAudioBtn">
-                <span id="audioBtnText">Generate Audio</span>
-                <span id="audioBtnSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    style="display: none;"></span>
-            </button>
+            <div class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit" onclick="generateAudio()" id="generateAudioBtn">
+                        <span id="audioBtnText">Generate Audio</span>
+                        <span id="audioBtnSpinner" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <span id="generateAudioError" class="form-text"
+                        style="color: rgb(188, 0, 0); font-weight: bold">
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -53,7 +73,9 @@
         var btnText = $('#btnText');
         var btnSpinner = $('#btnSpinner');
         var conversationList = $('#conversationList');
+        var errorField = $('#generateConversationError');
 
+        errorField.text('');
         promptFld.prop('disabled', true);
         btn.prop('disabled', true);
         btnText.hide();
@@ -81,6 +103,8 @@
                 }
             },
             error: function (xhr, status, error) {
+                errorMsg = JSON.parse(xhr.responseText);
+                errorField.text(errorMsg.message);
                 console.error(error);
             },
             complete: function () {
@@ -96,28 +120,30 @@
         var btn = $('#generateAudioBtn');
         var btnText = $('#audioBtnText');
         var btnSpinner = $('#audioBtnSpinner');
+        var errorField = $('#generateAudioError');
 
-        // Disable the button and show the spinner while processing
+        errorField.text('');
         btn.prop('disabled', true);
         btnText.hide();
         btnSpinner.show();
 
-        // Make the AJAX POST request to the specified endpoint
         $.ajax({
             url: '/api/conversations/audio',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ 
+            data: JSON.stringify({
                 conversationData: conversationData.conversation,
-                conversationHistory: conversationData.conversation_history }),
+                conversationHistory: conversationData.conversation_history
+            }),
             success: function (response) {
                 console.log(response);
             },
             error: function (xhr, status, error) {
-                console.error('Error generating audio:', error);
+                errorMsg = JSON.parse(xhr.responseText);
+                errorField.text(errorMsg.message);
+                console.error(error);
             },
             complete: function () {
-                // Re-enable the button and reset the UI
                 btn.prop('disabled', false);
                 btnSpinner.hide();
                 btnText.show();

@@ -47,12 +47,15 @@ def send_openai_request(messages, api_key=os.environ.get("OPENAI_API_KEY")):
     # Initialize OpenAI client
     client = OpenAI(api_key=api_key)
 
-    response = client.chat.completions.create(
-        model="gpt-4-turbo",
-        response_format={"type": "json_object"},
-        messages=messages
-    )
-    return response.choices[0].message.content
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4-turbo",
+            response_format={"type": "json_object"},
+            messages=messages
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return {"error": e.body["message"]}
 
 ############################################
 # Get next available conversation directory
