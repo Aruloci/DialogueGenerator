@@ -153,17 +153,17 @@ def create_audio():
         audio_annotations.append(annotations)
 
     # Add the background audio effect to the conversation
-    if reverb_effect != "Phone":
-        background_effect_annotations = {
-            "path": "",
-            "file": f"convtools\\ambient_noise\{background_effect}.mp3",
-            "offset": 0,
-            "type": "NON-SPEECH",
-            "subtype": "other",
-            "speaker": "<NA>",
-            "text_description": f"{background_effect} background noise"
-        }
-        audio_annotations.append(background_effect_annotations)
+    # if reverb_effect != "Phone":
+    #     background_effect_annotations = {
+    #         "path": "",
+    #         "file": f"convtools\\ambient_noise\{background_effect}.mp3",
+    #         "offset": 0,
+    #         "type": "NON-SPEECH",
+    #         "subtype": "other",
+    #         "speaker": "<NA>",
+    #         "text_description": f"{background_effect} background noise"
+    #     }
+    #     audio_annotations.append(background_effect_annotations)
 
 
     # Write the annotations to a CSV file

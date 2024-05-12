@@ -19,7 +19,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, emotion: st
         "xi-api-key": api_key
     }
     data = {
-        "text": f'{text},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.<break time="4.0s" />he said {emotion}ly.',
+        "text": f'{text},,,.<break time="4.0s" />he said {emotion}ly.',
         "model_id": "eleven_monolingual_v1",
         "voice_settings": {
             "stability": 0.5,
