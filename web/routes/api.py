@@ -36,7 +36,7 @@ def create_conversation():
                 - Voice: The elevent labs voice id to use for the sentence. Leave this blank for now.
 
             To make the generated conversation easier to parse create a JSON formatted output. The root of the JSON object is called "conversation". Make sure the keys are named "Name", "Text", "Emotion", "Timing" and "Voice".
-            One conversation should contain at least 5 sentences but should contain more.
+            One conversation should contain at least 3 sentences but should contain more.
             Did you understand that?""",
         }, 
         {
@@ -71,7 +71,7 @@ def create_conversation():
             Make sure to use the same voice ID for the same speaker and choose a fitting voice for the speaker.
             The voice must match the speakers name. If the speaker has a male name then choose a male voice. 
             If the name is female then choose a fitting female voice.
-            Remove any ; from the generated conversation.
+            Remove any ; from the generated conversation. No ; in the conversation is allowed.
             Keep the JSON format and the structure of the conversation.
             """
     })
@@ -136,7 +136,7 @@ def create_audio():
     offset = 0.0
     conversation = json.loads(conversation)
     for index, dialogue in enumerate(conversation["conversation"]):
-        audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"], output_dir=output_dir, api_key=elevenlabs_api_key)
+        audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Emotion"], output_dir=output_dir, api_key=elevenlabs_api_key)
         if 'error' in audio_chunk:
             return jsonify({"message": audio_chunk['error']}), 400
         
@@ -179,9 +179,9 @@ def create_audio():
     conv_file = conversationFileReader.conversationFile(csv_file_path)
     aw = audioWriter.audioWriter(conv_file, output_dir)
     if reverb_effect == "Phone":
-        aw.writeAudio(fileName="dialog-1-phone.mp3",**{'transmission':'phone'})
+        aw.writeAudio(fileName="dialog.mp3",**{'transmission':'phone'})
     else:
-        aw.writeAudio(fileName="dialog-1.mp3",**{'environment':reverb_effect})
+        aw.writeAudio(fileName="dialog.mp3",**{'environment':reverb_effect})
 
     # write the RTTM and TextGrid files
     rw = rttmWriter.rttmWriter(conv_file, output_dir)
@@ -189,5 +189,7 @@ def create_audio():
     tw = textGridWriter.textGridWriter(conv_file, output_dir)
     tw.writeTextGrid()
 
+    output_dir = output_dir.replace("web\\", "")
     return jsonify({"status": "success",
-                    "message": "Audio file generated successfully"})
+                    "message": "Audio file generated successfully",
+                    "audio_url": os.path.join(output_dir, "dialog.mp3")})

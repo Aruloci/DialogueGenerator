@@ -46,7 +46,7 @@
         <div class="border p-4">
             <h2>Generated Conversation</h2>
             <ul id="conversationList" class="list-group mb-3"></ul>
-            <div class="row g-2 align-items-center">
+            <div class="row g-2 align-items-center mb-3">
                 <div class="col-auto">
                     <button class="btn btn-primary" type="submit" onclick="generateAudio()" id="generateAudioBtn">
                         <span id="audioBtnText">Generate Audio</span>
@@ -55,10 +55,16 @@
                     </button>
                 </div>
                 <div class="col-auto">
-                    <span id="generateAudioError" class="form-text"
-                        style="color: rgb(188, 0, 0); font-weight: bold">
+                    <span id="generateAudioError" class="form-text" style="color: rgb(188, 0, 0); font-weight: bold">
                     </span>
                 </div>
+            </div>
+            <div id="audioPlayerContainer" style="display: none;">
+                <h4>Listen to the Audio</h4>
+                <audio id="audioPlayer" controls>
+                    <source src="" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
             </div>
         </div>
     </div>
@@ -121,6 +127,8 @@
         var btnText = $('#audioBtnText');
         var btnSpinner = $('#audioBtnSpinner');
         var errorField = $('#generateAudioError');
+        var audioPlayer = $('#audioPlayer');
+        var audioPlayerContainer = $('#audioPlayerContainer');
 
         errorField.text('');
         btn.prop('disabled', true);
@@ -136,7 +144,11 @@
                 conversationHistory: conversationData.conversation_history
             }),
             success: function (response) {
-                console.log(response);
+                if (response.audio_url) {
+                    audioPlayer.find('source').attr('src', response.audio_url);
+                    audioPlayer[0].load(); 
+                    audioPlayerContainer.show();  
+                }
             },
             error: function (xhr, status, error) {
                 errorMsg = JSON.parse(xhr.responseText);

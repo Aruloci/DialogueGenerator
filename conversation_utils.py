@@ -13,7 +13,8 @@ from audio_utils import merge_audio_files, generate_elevenlabs_audio
 ############################################
 def save_conversation(conversation, output_dir="output"):
     # Create a new directory for the conversation
-    os.makedirs(output_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     # Write the generated conversation to the file
     filename = os.path.join(output_dir, "conversation.json")
@@ -62,7 +63,7 @@ def send_openai_request(messages, api_key=os.environ.get("OPENAI_API_KEY")):
 ############################################
 def get_next_conversation_directory(sub_dir="user"):
     # Create the user directory if it doesn't exist
-    output_dir = os.path.join("output", sub_dir)
+    output_dir = os.path.join("web\static\output", sub_dir)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -81,7 +82,7 @@ def get_next_conversation_directory(sub_dir="user"):
 # Get the current conversation directory
 ############################################
 def get_current_conversation_directory(sub_dir="user"):
-    output_dir = os.path.join("output", sub_dir)
+    output_dir = os.path.join("web\static\output", sub_dir)
 
     # Find the current conversation directory
     existing_directories = [d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d))]
