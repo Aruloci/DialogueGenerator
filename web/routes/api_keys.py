@@ -22,7 +22,8 @@ def update_api_key():
     key_instance.last_updated = datetime.now(timezone.utc)
     db.session.commit()
     
-    return jsonify({'status': 'success', 'message': 'API Key updated successfully'})
+    updated_key = ApiKey.query.filter_by(user_id=current_user.id, service=service).first()
+    return jsonify({'status': 'success', 'message': 'API Key updated successfully', 'api_key': updated_key.api_key})
 
 @login_required
 def get_user_api_key(service):

@@ -43,9 +43,7 @@
 <script>
     function updateAPIKey(input, service) {
         const saveIcon = input.parentNode.nextElementSibling.nextElementSibling.children[0];
-        saveIcon.classList.add('visible'); // Make the icon visible and opaque
         const fullValue = input.value;
-        const keyLength = input.getAttribute('data-key-length');
 
         fetch('/update-api-key', {
             method: 'POST',
@@ -54,10 +52,17 @@
         })
             .then(response => response.json())
             .then(data => {
-                saveIcon.className = data.status === 'success' ? 'bi bi-check-circle save-icon visible' : 'bi bi-x-circle save-icon visible';
-                revertKeyDisplay(input, fullValue, keyLength); 
+                if (data.status === 'success') {
+                    // Update the displayed and full key values
+                    input.setAttribute('data-full-key', data.api_key);
+                    input.setAttribute('data-key-length', data.api_key.length);
+                    revertKeyDisplay(input); // Adjust the display after successful update
+                    saveIcon.className = 'bi bi-check-circle save-icon visible';
+                } else {
+                    saveIcon.className = 'bi bi-x-circle save-icon visible';
+                }
                 setTimeout(() => {
-                    saveIcon.classList.remove('visible'); 
+                    saveIcon.classList.remove('visible');
                 }, 3000);
             })
             .catch(error => {
@@ -69,10 +74,11 @@
             });
     }
 
-    function revertKeyDisplay(input, fullValue, keyLength) {
+    function revertKeyDisplay(input) {
         const visibleChars = 3;
-        const maskedPart = '*'.repeat(keyLength - visibleChars);
-        input.value = fullValue.substring(0, visibleChars) + maskedPart;
+        const keyLength = parseInt(input.getAttribute('data-key-length')) || 0;
+        const maskedPart = '*'.repeat(Math.max(0, keyLength - visibleChars));
+        input.value = input.getAttribute('data-full-key').substring(0, visibleChars) + maskedPart;
     }
 </script>
 
