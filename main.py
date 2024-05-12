@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from conversation_utils import send_openai_request, save_conversation, get_next_conversation_directory
 from audio_utils import generate_elevenlabs_audio
-from convtools import audioWriter, conversationFileReader
+from convtools import audioWriter, conversationFileReader, rttmWriter, textGridWriter
 
 
 # Load environment variables
@@ -163,6 +163,12 @@ if reverb_effect == "Phone":
 else:
     aw.writeAudio(fileName="dialog-1-church.mp3",**{'environment':reverb_effect})
 
+# write the RTTM and TextGrid files
+rw = rttmWriter.rttmWriter(conv_file, output_dir)
+rw.writeRTTM()
+
+tw = textGridWriter.textGridWriter(conv_file, output_dir)
+tw.writeTextGrid()
 # aw.writeAudio(fileName="dialog-1-reverb.mp3",**{'reverb':0.1})
 # aw.writeAudio(fileName="dialog-1-church.mp3",**{'environment':'church'})
 # aw.writeAudio(fileName="dialog-1-bitrate.mp3",**{'bitrate':4})
