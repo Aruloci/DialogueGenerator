@@ -128,17 +128,14 @@ li {
     list-style: none;
 }
 
-h1 {
-    font-weight: 600;
-    font-size: 1.5rem;
-}
-
 body {
     font-family: "Reddit Mono", monospace;
 }
 
 .wrapper {
     display: flex;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
 .main {
@@ -205,6 +202,9 @@ body {
     transition: all .25s ease-in-out;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0
 }
 
 #sidebar.expand {

@@ -9,14 +9,24 @@
             <h2 class="mb-4">Generate dialogue</h2>
             <p>This tool allows you to craft custom dialogues based on your input.
                 Simply describe the scenario you envision, and our tool will generate the
-                conversation text for you. Review and adjust the text as needed.
-                Once satisfied, you can proceed to convert this text into dynamic audio files,
-                complete with voice selections to fit the dialogue's tone and character.</p>
+                conversation text for you. Review and adjust the text as needed.</p>
             <div class="mb-3">
                 <label for="conversationPrompt">Describe the conversation</label>
                 <textarea class="form-control" id="conversationPrompt"
                     placeholder="Create a conversation of an elderly couple discussing their weekend plans."
-                    id="floatingTextarea2" style="height: 100px"></textarea>
+                    style="height: 100px"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="voiceIDs">Provide the ElevenLabs voiceIDs including a voice description</label>
+                <textarea class="form-control" id="voiceIDs" style="height: 185px;">
+- NOpBlnGInO9m6vDvFkFC : Old Male with American accent
+- Mr0lS24b2pkDEz6noGEd : Young Female with American accent
+- otVgZoZFXk2SZDc0eBdZ : Young Female with Australian accent
+- WLKp2jV6nrS8aMkPPDRO : Middle-aged Male with Australian accent
+- x3gYeuNB0kLLYxOZsaSh : Middle-aged Male with Indian accent
+- aTxZrSrp47xsP6Ot4Kgd : Young Female with African American accent
+                </textarea>
+                <small class="form-text text-muted">These voiceIDs must be added to VoiceLab in ElevenLabs</small>
             </div>
             <div class="mb-3">
                 <label for="conversationCount" class="form-label">Number of Conversations</label>
@@ -75,6 +85,7 @@
     function generateConversation() {
         var promptFld = $('#conversationPrompt');
         var prompt = promptFld.val();
+        var voiceIDs = $('#voiceIDs').val();
         var btn = $('#generateConversationBtn');
         var btnText = $('#btnText');
         var btnSpinner = $('#btnSpinner');
@@ -91,7 +102,7 @@
             url: '/api/conversations',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ dialoguePrompt: prompt }),
+            data: JSON.stringify({ dialoguePrompt: prompt, voiceIDs: voiceIDs}),
             success: function (response) {
                 conversationData = response; // Save the conversation data for later use
                 conversationList.empty();
@@ -101,7 +112,7 @@
                         innerConversation.conversation.forEach(function (entry) {
                             var listItem = $('<li class="list-group-item"></li>');
                             listItem.html(`<strong>${entry.Name}</strong>: ${entry.Text} <br>
-                                       <small>Emotion: ${entry.Emotion}, Timing: ${entry.Timing}s</small>`);
+                                       <small>Emotion: ${entry.Emotion}, Timing: ${entry.Timing}s, VoiceID: ${entry.Voice}</small>`);
                             conversationList.append(listItem);
                         });
                         $('#conversationOutput').show();
@@ -146,8 +157,8 @@
             success: function (response) {
                 if (response.audio_url) {
                     audioPlayer.find('source').attr('src', response.audio_url);
-                    audioPlayer[0].load(); 
-                    audioPlayerContainer.show();  
+                    audioPlayer[0].load();
+                    audioPlayerContainer.show();
                 }
             },
             error: function (xhr, status, error) {

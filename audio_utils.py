@@ -40,6 +40,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, emotion: st
         # audio_segment = add_pause(audio_segment, pause_duration=timing * 1000) # Add a pause at the end of the audio
         file_name = os.path.join(output_dir, f"output{text_id}.mp3")
         audio_segment.export(file_name, format="mp3") # Save the audio file
+        print(f"ElevenLabs usage: {len(data['text'])} characters")
         return audio_segment, file_name
     else:
         logging.error(f"Failed to fetch audio for text_id={text_id}: {response.status_code} {response.reason}")

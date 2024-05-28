@@ -3,14 +3,62 @@
 {% block content %}
 
 <div class="container">
-    <h1>Home</h1>
-    <p>Welcome to the home page.</p>
-
-    {% if current_user.is_authenticated %}
-    <h2>You are logged in</h2>
-    {% else %}
-    <h2>You are not logged in</h2>
-    {% endif %}
+    <h1>Welcome to TalkForge</h1>
+    <p>Welcome to our conversation generator tool! This platform is an efficient and cost-effective solution for
+        creating training data for speech models. It allows developers and researchers to generate high-quality,
+        realistic dialogues for speech recognition systems and conversational AI. </p>
+    <p>Input a scenario, and our tool will craft text-based dialogues, complete with emotional cues and
+        timing considerations.
+        You can then convert these dialogues into audio files with various voice options, enhancing your training
+        datasets.
+        Use our tool to streamline your data generation process, saving time and resources while improving the
+        effectiveness of your speech models.</p>
 </div>
+<div class="container my-5">
+    <h3>Test our conversations!</h3>
+    <div class="card mt-4">
+        <div class="card-header">Conversation at a railway station</div>
+        <div class="card-body d-flex align-items-center"> 
+            <audio controls class="flex-grow-1">
+                <source src="/static/example_dialog.mp3" type="audio/mpeg" />
+                Audio not supported
+            </audio>
+            <button class="btn btn-primary ms-2" data-bs-toggle="collapse" data-bs-target="#conversationText">Show Conversation</button>
+        </div>
+        <div class="collapse" id="conversationText">
+            <div class="card-body">
+                <ul class="list-group">
+                    {% set conversation = [
+                        {"Name": "Anna", "Text": "Excuse me, sir, could you tell us how long the delay might be?", "Emotion": "curious", "Timing": 0.0, "Voice": "Mr0lS24b2pkDEz6noGEd"},
+                        {"Name": "Conductor", "Text": "Good evening, ladies. Unfortunately, the delay could be up to 30 minutes.", "Emotion": "apologetic", "Timing": 0.5, "Voice": "WLKp2jV6nrS8aMkPPDRO"},
+                        {"Name": "Beth", "Text": "Thirty minutes? What,,, uhm, what seems to be the problem?", "Emotion": "frustrated", "Timing": 0.5, "Voice": "otVgZoZFXk2SZDc0eBdZ"}, 
+                        {"Name": "Conductor", "Text": "There's an issue with the signals ahead,,, nothing too serious, but it does take a bit to resolve.", "Emotion": "calm", "Timing": 0.5, "Voice": "WLKp2jV6nrS8aMkPPDRO"},
+                        {"Name": "Anna", "Text": "Will we get any updates as we wait? Or... you know?", "Emotion": "concerned", "Timing": 0.5, "Voice": "Mr0lS24b2pkDEz6noGEd"},
+                        {"Name": "Conductor", "Text": "Absolutely, we'll keep", "Emotion": "reassuring", "Timing": -0.1, "Voice": "WLKp2jV6nrS8aMkPPDRO"}, {"Name": "Beth", "Text": "updates coming, right? We just want to make sure we're not sitting here without any information.", "Emotion": "impatient", "Timing": -0.1, "Voice": "otVgZoZFXk2SZDc0eBdZ"}, {"Name": "Conductor", "Text": "Yes, exactly. I apologize for the inconvenience. We will provide regular updates every 10 minutes.", "Emotion": "supportive", "Timing": 0.4, "Voice": "WLKp2jV6nrS8aMkPPDRO"}, {"Name": "Anna", "Text": "Alright, thanks for the information. Uhm, what should we do in the meantime?", "Emotion": "curious", "Timing": 0.5, "Voice": "Mr0lS24b2pkDEz6noGEd"}, {"Name": "Conductor", "Text": "You might want to visit the station's cafe. They just opened a new coffee specialty section.", "Emotion": "helpful", "Timing": 0.5, "Voice": "WLKp2jV6nrS8aMkPPDRO"}, {"Name": "Beth", "Text": "Sounds good, Anna, let's grab a coffee and hopefully, the time will fly by.", "Emotion": "optimistic", "Timing": 0.5, "Voice": "otVgZoZFXk2SZDc0eBdZ"},
+                        {"Name": "Anna", "Text": "Yeah, a warm drink sounds perfect right now.", "Emotion": "agreeable", "Timing": 0.5, "Voice": "Mr0lS24b2pkDEz6noGEd"}
+                    ] %}
+                    {% for entry in conversation %}
+                    <li class="list-group-item">
+                        <strong>{{ entry.Name }}:</strong> {{ entry.Text }}
+                        <br>
+                        <small>Emotion: {{ entry.Emotion }}, Timing: {{ entry.Timing }}s</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <p class="mb-0">Want to create your own conversations?</p>
+        </div>
+        <div class="col-auto">
+            <a href="#" class="btn btn-primary" data-bs-target="#registerModal" data-bs-toggle="modal" data-bs-dismiss="modal">Let's get started!</a>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}

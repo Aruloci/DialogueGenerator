@@ -13,7 +13,7 @@ class textGridWriter:
 
     def writeTextGrid(self):
         """Write TextGrid file."""
-        print("Generate TextGrid for",self.convFile.file_path)
+        # print("Generate TextGrid for",self.convFile.file_path)
         outputFile = os.path.join(self.outputFolder, "conversation.TextGrid")
         speakers = self.convFile.speakers 
         tg = mytextgrid.create_textgrid(xmin = 0, xmax = self.convFile.totalDuration)
@@ -29,7 +29,7 @@ class textGridWriter:
                 tier.set_text_at_index(i,text)
 
         tg.write(outputFile)
-        print("TextGrid file written to", outputFile)
+        # print("TextGrid file written to", outputFile)
 
 
     def calculateIntervals(self, lines):

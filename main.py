@@ -37,10 +37,10 @@ messages=[
     }, 
     {
         "role": "user",
-        # "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
-        # "content": "Generate a dialog between a boss and his employee about his bad performance at work.",
+        "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
+        "content": "Generate a dialog between a boss and his employee about his bad performance at work.",
         "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
-        # "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
+        "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
     }
 ]
 conversation = send_openai_request(messages)
@@ -70,6 +70,7 @@ messages.append({
         If the name is female then choose a fitting female voice.
         Remove any ; from the generated conversation.
         Keep the JSON format and the structure of the conversation.
+        
         """
 })
 conversation = send_openai_request(messages)
@@ -116,7 +117,7 @@ audio_annotations = []
 offset = 0.0
 conversation = json.loads(conversation)
 for index, dialogue in enumerate(conversation["conversation"]):
-    audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Timing"], dialogue["Emotion"], output_dir=output_dir)
+    audio_chunk, file_name = generate_elevenlabs_audio(index, dialogue["Text"], dialogue["Voice"], dialogue["Emotion"], output_dir=output_dir)
     
     annotations = {
         "path": "",

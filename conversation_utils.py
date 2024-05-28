@@ -4,7 +4,6 @@ import logging
 import os
 
 from openai import OpenAI
-import pandas as pd
 from audio_utils import merge_audio_files, generate_elevenlabs_audio
 
 
@@ -54,6 +53,7 @@ def send_openai_request(messages, api_key=os.environ.get("OPENAI_API_KEY")):
             response_format={"type": "json_object"},
             messages=messages
         )
+        print("OpenAI Usage:", response.usage)
         return response.choices[0].message.content
     except Exception as e:
         return {"error": e.body["message"]}

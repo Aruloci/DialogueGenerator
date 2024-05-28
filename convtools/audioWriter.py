@@ -10,17 +10,18 @@ class audioWriter:
         self.generateAudio()
 
     def generateAudio(self):
-        print("Generate audio for",self.convFile.file_path)
+        # print("Generate audio for",self.convFile.file_path)
         self.audio = np.zeros((1,self.convFile.sampleCount))
         for line in self.convFile.lines:
-            print("- adding", line.audioFile)
+            # print("- adding", line.audioFile)
             with AudioFile(line.audioFilePath) as af:
                 audio = af.read(af.frames) # TODO: read chunks
                 if (audio.shape[0] >1):
-                    print("  Warning: audio has more than one channel, using only the first one.")
+                    # print("  Warning: audio has more than one channel, using only the first one.")
                     audio = audio[0]
                     audio.resize((1,audio.shape[0]))
                 startSample = line.startSample
+                # print(line.startSample)
                 if startSample < 0:
                     print("  Warning: negative offsets not supported, setting to 0.")
                     startSample = 0
@@ -30,7 +31,7 @@ class audioWriter:
 
     
     def writeAudio(self, fileName="output.mp3",**kwargs):
-        print(f"Processing audio for {self.convFile.file_path}...")
+        # print(f"Processing audio for {self.convFile.file_path}...")
         sr = self.convFile.sampleRate
         audio = np.copy(self.audio)
         if "reverb" in kwargs:

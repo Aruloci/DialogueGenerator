@@ -6,10 +6,12 @@ from web.models.ApiKey import ApiKey
 web_bp = Blueprint('web', __name__)
 
 @web_bp.route("/")
+@web_bp.route("/index")
 def index():
     return render_template("index.html")
 
 @web_bp.route("/create")
+@login_required
 def create():
     return render_template("create_set.html")
 
