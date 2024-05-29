@@ -11,11 +11,13 @@ from convtools import audioWriter, conversationFileReader, rttmWriter, textGridW
 
 # Load environment variables
 load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
+elevenlabs_api_key = os.getenv("ELEVENLABS_API_KEY")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)  # Set the logging level
 
-output_dir = get_next_conversation_directory(sub_dir="user1")
+output_dir = get_next_conversation_directory(sub_dir="pipe_user")
 # Create initial conversation with focus on dialogue content
 messages=[
     {
@@ -35,15 +37,18 @@ messages=[
         One conversation should contain at least 5 sentences but should contain more.
         Did you understand that?""",
     }, 
-    {
+    { 
+        ########################################
+        # Add your conversation generation here
+        ########################################
         "role": "user",
         "content": "Generate a dialog between two females which are talking to a male conductor about the delay of a train at the trainstation.",
-        "content": "Generate a dialog between a boss and his employee about his bad performance at work.",
-        "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
-        "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
+        # "content": "Generate a dialog between a boss and his employee about his bad performance at work.",
+        # "content": "Generate a dialog between an interviewer and an old WW2 veteran talking about his experience.",
+        # "content": "Generate a dialog between 3 friends talking about a movie they watched last night. One of the friends is very excited about the movie.",
     }
 ]
-conversation = send_openai_request(messages)
+conversation = send_openai_request(messages, openai_api_key)
 messages.append({
     "role": "assistant",
     "content": conversation
@@ -73,12 +78,12 @@ messages.append({
         
         """
 })
-conversation = send_openai_request(messages)
+conversation = send_openai_request(messages, openai_api_key)
 messages.append({
     "role": "assistant",
     "content": conversation
 })
-save_conversation(conversation, output_dir=output_dir) # Save the conversation to a JSON file
+save_conversation(json.dumps(conversation), output_dir=output_dir) # Save the conversation to a JSON file
 
 # Suggest a background environment and reverb effect for the conversation
 messages.append({
@@ -106,7 +111,7 @@ messages.append({
         }
         """
 })
-post_processing = send_openai_request(messages)
+post_processing = send_openai_request(messages, openai_api_key)
 post_processing = json.loads(post_processing)
 background_effect = post_processing["background_effect"]
 reverb_effect = post_processing["reverb_effect"]

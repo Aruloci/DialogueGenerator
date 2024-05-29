@@ -43,7 +43,7 @@ def create_audio_file(conversation):
 # Send a request to the OpenAI API
 # Documentation: https://platform.openai.com/docs/guides/text-generation
 ############################################
-def send_openai_request(messages, api_key=os.environ.get("OPENAI_API_KEY")):
+def send_openai_request(messages, api_key):
     # Initialize OpenAI client
     client = OpenAI(api_key=api_key)
 
