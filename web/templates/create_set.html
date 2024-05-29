@@ -69,12 +69,14 @@
                     </span>
                 </div>
             </div>
-            <div id="audioPlayerContainer" style="display: none;">
-                <h4>Listen to the Audio</h4>
+            <div id="audioPlayerContainer" class="d-flex" style="display: none !important;">
                 <audio id="audioPlayer" controls>
                     <source src="" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
+                <form action="/api/conversations/download/0" id="downloadForm" method="GET" class="ms-3">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Download Conversation</button>
+                </form>
             </div>
         </div>
     </div>
@@ -102,7 +104,7 @@
             url: '/api/conversations',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ dialoguePrompt: prompt, voiceIDs: voiceIDs}),
+            data: JSON.stringify({ dialoguePrompt: prompt, voiceIDs: voiceIDs }),
             success: function (response) {
                 conversationData = response; // Save the conversation data for later use
                 conversationList.empty();
@@ -155,11 +157,13 @@
                 conversationHistory: conversationData.conversation_history
             }),
             success: function (response) {
+                console.log(response);
                 if (response.audio_url) {
                     audioPlayer.find('source').attr('src', response.audio_url);
                     audioPlayer[0].load();
                     audioPlayerContainer.show();
                 }
+                updateDownloadLink(response.conversation_number);
             },
             error: function (xhr, status, error) {
                 errorMsg = JSON.parse(xhr.responseText);
@@ -172,6 +176,12 @@
                 btnText.show();
             }
         });
+    }
+
+    // Update the download link with the conversation number
+    function updateDownloadLink(conversationNumber) {
+        var form = $('#downloadForm')[0];
+        form.action = '/api/conversations/download/' + conversationNumber;
     }
 
     // Enable the range input

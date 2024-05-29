@@ -1,14 +1,16 @@
 import csv
 import os
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 from flask_login import login_required, current_user
 import json
+import time
+import shutil
 
 from audio_utils import generate_elevenlabs_audio
 from conversation_utils import get_current_conversation_directory, get_next_conversation_directory, save_conversation, send_openai_request
 from convtools import audioWriter, conversationFileReader, rttmWriter, textGridWriter
 from web.routes.api_keys import get_elevenlabs_api_key, get_openai_api_key
-import time
+
 
 api = Blueprint("api", __name__)
 
@@ -72,7 +74,7 @@ def create_conversation():
             The conversation should feel like a real dialogue between real people. 
             Include filler words like "uhm", "uh", "you know" etc. to create a more natural conversation. 
             Adjust the dialogue where needed to make the conversation seem more natural.
-            Add the voice ID from ElevenLabs. You can choose from the following IDs:
+            Add the voice ID from ElevenLabs. You can choose from the following IDs. Do not use any other Voice IDs.
             {voice_ids}
             Make sure to use the same voice ID for the same speaker and choose a fitting voice for the speaker.
             The voice must match the speakers name. If the speaker has a male name then choose a male voice. 
@@ -209,8 +211,24 @@ def create_audio():
     tw.writeTextGrid()
 
     output_dir = output_dir.replace("web\\", "")
+    # Extract the conversation number
+    path_parts = output_dir.split('\\')
+    conversation_part = path_parts[-1]
+    conversation_number = conversation_part.split('_')[-1]
+
     end = time.time()
     print(f"Time taken to create audio: {end-start:.2f} seconds")
     return jsonify({"status": "success",
                     "message": "Audio file generated successfully",
-                    "audio_url": os.path.join(output_dir, "dialog.mp3")})
+                    "audio_url": os.path.join(output_dir, "dialog.mp3"),
+                    "conversation_number": conversation_number})
+
+@api.route("/api/conversations/download/<int:conversation_id>", methods=["GET"])
+@login_required
+def download_conversation(conversation_id): 
+    user_id = current_user.id
+    folder_path = f"web\\static\\output\\user_{user_id}\\conversation_{conversation_id}"
+    download_path = f"static\\output\\user_{user_id}\\conversation_{conversation_id}.zip"
+
+    shutil.make_archive(folder_path, 'zip', folder_path)
+    return send_file(download_path, as_attachment=True)

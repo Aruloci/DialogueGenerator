@@ -43,7 +43,7 @@ def generate_elevenlabs_audio(text_id: int, text: str, speaker: str, emotion: st
         print(f"ElevenLabs usage: {len(data['text'])} characters")
         return audio_segment, file_name
     else:
-        logging.error(f"Failed to fetch audio for text_id={text_id}: {response.status_code} {response.reason}")
+        logging.error(f"Failed to fetch audio for text_id={text_id} with voiceID={speaker}: {response.status_code} {response.reason}")
         if response.status_code == 401:
             return {"error": "Invalid API key. Please check your API key and try again."}, None
         return {"error": f"{response.status_code} {response.reason}"}, None

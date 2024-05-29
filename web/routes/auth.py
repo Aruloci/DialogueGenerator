@@ -19,7 +19,6 @@ def register():
 def login():
     if request.method == "POST":
         user = Users.query.filter_by(username=request.form.get("username")).first()
-        print(request.form.get("password"))
         if user and user.password == request.form.get("password"):
             login_user(user)
         return redirect(url_for('web.index'))
