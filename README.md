@@ -85,4 +85,4 @@ DialogueGenerator/
 ```
 
 # Contact
-For any inquiries, please reach out to Dominic (pfistdo1@students.zhaw.ch).
+For any inquiries, please reach out to Dominic (dominic.pfister@swissonline.ch).
